@@ -17,7 +17,7 @@ if !isfile("q1_q17_dr25_stellar.csv") && !isfile("inputs/q1_q17_dr25_stellar.csv
    println("# Downloading q1_q17_dr25_stellar.csv")
    input_dir = parsed_args["input-path"] != nothing ? parsed_args["input-path"] : "inputs"
    output_dir = parsed_args["output-path"] != nothing ? parsed_args["output-path"] : input_dir
-   download("http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=q1_q17_dr25_stellar&format=csv&select=*",joinpaht(output_dir,"q1_q17_dr25_stellar.csv"))
+   download("http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=q1_q17_dr25_stellar&format=csv&select=*",joinpath(output_dir,"q1_q17_dr25_stellar.csv"))
    nothing_to_download = false
 end
 
