@@ -24,17 +24,16 @@ end
 if !isfile("dr25fgk_relaxcut_osds.jld2")
    println("# Downloading dr25fgk_relaxcut_osds.jld2")
    output_dir = parsed_args["output-path"] != nothing ? parsed_args["output-path"] : "."
-   download("https://psu.box.com/shared/static/u4ygamw8go1flckjgz7c9qgp2wfufams.jld2",joinpath(output_dir,"dr25fgk_relaxcut_osds.jld2"))
+   download("https://scholarsphere.psu.edu/resources/460cb19b-86e9-4c04-ac17-69950444437f/downloads/13899",joinpath(output_dir,"dr25fgk_relaxcut_osds.jld2"))
    nothing_to_download = false
 end
 
 if !isfile("allosds.jld") && parsed_args["download-large-files"]
    println("# Downloading allosds.jld (this is a large file)")
    output_dir = parsed_args["output-path"] != nothing ? parsed_args["output-path"] : "."
-   download("https://psu.box.com/shared/static/98bx1oc4bsg294wctinkaseqhslf67l5.jld",joinpath(output_dir,"allosds.jld"))
+   download("https://scholarsphere.psu.edu/resources/ef562cd1-7a32-40fd-b59b-36f06c47db1c/downloads/13890",joinpath(output_dir,"allosds.jld"))
    nothing_to_download = false
 end
-
 if nothing_to_download
     println("# All stellar files that need to be downloaded are already on disk.")
 end

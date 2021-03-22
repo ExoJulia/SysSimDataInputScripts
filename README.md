@@ -19,12 +19,14 @@ There are some other scripts that aren't yet fully automated, but still may be u
 - parse_args.jl: Used by multiple scripts to parse command line arguments.  Use 'julia scripts/make.jl -h' to see the command-line options.
 
 ## Downloading files manually
-If you would rather download and copy files manually, key files can be found in a public box.com folder.
+If you would rather download and copy files manually, key files can be found in a Penn State's ScholarSphere [Collection of SysSim Data Files](https://scholarsphere.psu.edu/resources/175d7036-555b-4fc9-b57e-db8af8bb4004a).
+
+### One sigma depth functions
+- [FGK Kepler target stars selected for Hsu et al. 2019 and He et al. 2020 studies](https://scholarsphere.psu.edu/resources/460cb19b-86e9-4c04-ac17-69950444437f/downloads/13899)
+- [All Kepler target stars](https://scholarsphere.psu.edu/resources/ef562cd1-7a32-40fd-b59b-36f06c47db1c)
 
 ### Stellar tables (in case NExScI changes things)
 - https://psu.box.com/v/KeplerStarTableDR24csv
 - https://psu.box.com/v/KeplerStarTableDR25csv
 
-### One sigma depth functions
-- https://psu.box.com/v/Kepler1SigmaDepthFunctionsAll
-- https://psu.box.com/v/Kepler1SigmaDepthFunctionsFGK
+
