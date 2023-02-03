@@ -1,4 +1,4 @@
-using HDF5, DataFrames, CSV, JLD
+using HDF5, DataFrames, CSV, JLD2
 using StatsBase, Polynomials, CurveFit
 using ExoplanetsSysSim
 using PyPlot
@@ -8,12 +8,12 @@ gaia_filename = joinpath(dirname(pathof(ExoplanetsSysSim)), "../data", "gaiadr2_
 mast_filename = joinpath(dirname(pathof(ExoplanetsSysSim)), "../data", "KeplerMAST_TargetProperties.csv")
 berger2020_filename = joinpath(dirname(pathof(ExoplanetsSysSim)), "../data", "GKSPCPapTable2_2020-04-16.txt")
 
-stellar_catalog_file_out = joinpath(dirname(pathof(ExoplanetsSysSim)), "../data", "q1q17_dr25_gaia_berger_fgk_HFR2020b.jld2")
+stellar_catalog_file_out = joinpath(dirname(pathof(ExoplanetsSysSim)), "../data", "q1q17_dr25_gaia_berger_fgk_HFR2020b_regen.jld2")
 
-kep_df = CSV.read(kep_filename)
-gaia_df = CSV.read(gaia_filename)
-mast_df = CSV.read(mast_filename)
-berger2020_df = CSV.read(berger2020_filename; delim="&")
+kep_df = CSV.read(kep_filename, DataFrame)
+gaia_df = CSV.read(gaia_filename, DataFrame)
+mast_df = CSV.read(mast_filename, DataFrame)
+berger2020_df = CSV.read(berger2020_filename, DataFrame; delim="&")
 
 dup_gaiaid = findall(nonunique(DataFrame(x = gaia_df[!,:source_id])))
 gaiaid_keep = trues(size(gaia_df,1))
@@ -23,7 +23,7 @@ gaia_df = gaia_df[gaiaid_keep,:]
 println("Total crossref target stars = ", length(gaia_df[!,:kepid]))
 
 mag_diff = gaia_df[!,:phot_g_mean_mag].-gaia_df[!,:kepmag]
-quant_arr = quantile(mag_diff, [0.067,0.933])   # 1.5-sigma cut
+quant_arr = quantile(mag_diff[.~isnan.(mag_diff)], [0.067,0.933])   # 1.5-sigma cut
 mag_match = findall(x->quant_arr[1]<=x<=quant_arr[2], mag_diff)
 gaia_df = gaia_df[mag_match,:]
 
@@ -104,10 +104,11 @@ fgk_color = (0.5 .<= df_fit[!,:bp_rp] .<= 1.7)
 df_fit = df_fit[findall(fgk_color),:]
 near_FGK_MS = []
 coeff = [2.5,-3.6,0.9]
+polycoeff = Polynomial(coeff)
 for i in 1:6
-    #global near_FGK_MS = (log10.(df_fit[!,:lum_val]).< map(x->polyval(Poly(coeff),x),df_fit[!,:bp_rp] .-  df_fit[!,:e_bp_min_rp_val]) .+ log10(1.75))
+    #global near_FGK_MS = (log10.(df_fit[!,:lum_val]).< map(x->polycoeff(x),df_fit[!,:bp_rp] .-  df_fit[!,:e_bp_min_rp_val]) .+ log10(1.75))
     #global coeff = poly_fit(df_fit[near_FGK_MS,:bp_rp] .- df_fit[near_FGK_MS,:e_bp_min_rp_val],log10.(df_fit[near_FGK_MS,:lum_val]),2)
-    global near_FGK_MS = (log10.(df_fit[!,:lum_val]).< map(x->polyval(Poly(coeff),x),df_fit[!,:bp_rp]) .+ log10(1.75))
+    global near_FGK_MS = (log10.(df_fit[!,:lum_val]).< map(x->polycoeff(x),df_fit[!,:bp_rp]) .+ log10(1.75))
     global coeff = poly_fit(df_fit[near_FGK_MS,:bp_rp], log10.(df_fit[near_FGK_MS,:lum_val]),2)
     println(i, ": ",coeff," : ", length(findall(near_FGK_MS)))
 end
@@ -205,9 +206,10 @@ fgk_color = (0.5 .<= df[!,:bp_rp] .- ebprp_interp .<= 1.7)
 df = df[findall(fgk_color),:]
 near_FGK_MS = []
 coeff = [2.5,-3.6,0.9]
+polycoeff = Polynomial(coeff)
 for i in 1:6
     global ebprp_interp = spl(df[!,:bp_rp]) ./df[!,:parallax]
-    global near_FGK_MS = (log10.(df[!,:lum_val]) .< map(x->polyval(Poly(coeff),x),df[!,:bp_rp] .- ebprp_interp) .+ log10(1.75))
+    global near_FGK_MS = (log10.(df[!,:lum_val]) .< map(x->polycoeff(x),df[!,:bp_rp] .- ebprp_interp) .+ log10(1.75))
     global ebprp_interp = spl(df[near_FGK_MS,:bp_rp]) ./df[near_FGK_MS,:parallax]
     global coeff = poly_fit(df[near_FGK_MS,:bp_rp] .- ebprp_interp, log10.(df[near_FGK_MS,:lum_val]),2)
     println(i, ": ",coeff," : ", length(findall(near_FGK_MS)))
